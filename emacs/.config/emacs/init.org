@@ -1,0 +1,65 @@
+#+title: Emacs Configuration
+
+I would like to set an emacs onfiguration from scratch.
+This will take many settings from Spacemacs, like evil-mode, space leader keybindings
+
+
+* Initialization
+
+
+** Package Manager
+Adding more repositories to emacs, such as elpa, melpa and org-contrib
+
+#+begin_src emacs-lisp
+;; Package configs
+(require 'package)
+(setq package-enable-at-startup nil)
+(setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+                         ("gnu"   . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
+#+end_src
+
+** Use Package
+Next, we set use-package
+
+#+begin_src emacs-lisp
+;; Bootstrap `use-package`
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+#+end_src 
+
+* Aspect
+** Minimal UI
+Make emacs UI as minimal as possible
+
+#+begin_src emacs-lisp
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+#+end_src
+
+** Theme
+Install gruvbox theme
+#+begin_src emacs-lisp
+(use-package gruvbox-theme
+  :ensure t
+  :config
+  (load-theme 'gruvbox-dark-hard t))
+#+end_src
+
+
+* Keybindings
+** Evil Mode
+Enable Vi bindings in emacs
+
+#+begin_src emacs-lisp
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode 1))
+#+end_src
