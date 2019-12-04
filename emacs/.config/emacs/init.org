@@ -18,6 +18,7 @@ Adding more repositories to emacs, such as elpa, melpa and org-contrib
                          ("gnu"   . "http://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
+(set-frame-parameter (selected-frame) 'alpha '(95 95))
 #+end_src
 
 ** Use Package
@@ -29,7 +30,7 @@ Next, we set use-package
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
-#+end_src 
+#+end_src
 
 * Aspect
 ** Minimal UI
@@ -52,7 +53,11 @@ Install gruvbox theme
   (load-theme 'gruvbox-dark-hard t))
 #+end_src
 
-
+** Font
+Define Fantasque sans mono as default font
+#+BEGIN_SRC emacs-lisp
+(set-frame-font "Fantasque Sans Mono-16" nil t)
+#+END_SRC
 * Keybindings
 ** Evil Mode
 Enable Vi bindings in emacs
