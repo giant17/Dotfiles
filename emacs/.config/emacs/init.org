@@ -52,6 +52,9 @@ Install gruvbox theme
   (load-theme 'gruvbox-dark-hard t))
 #+end_src
 
+#+RESULTS:
+: t
+
 ** Font
 Define Fantasque sans mono as default font
 #+BEGIN_SRC emacs-lisp
@@ -60,7 +63,7 @@ Define Fantasque sans mono as default font
 
 ** Transparency
 Set 95% transparency
-#+begin_src emacs-lisp :tangle yes
+#+begin_src emacs-lisp
 (set-frame-parameter (selected-frame) 'alpha '(95 95))
 #+end_src
 * Keybindings
