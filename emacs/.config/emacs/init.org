@@ -18,7 +18,6 @@ Adding more repositories to emacs, such as elpa, melpa and org-contrib
                          ("gnu"   . "http://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
-(set-frame-parameter (selected-frame) 'alpha '(95 95))
 #+end_src
 
 ** Use Package
@@ -58,6 +57,12 @@ Define Fantasque sans mono as default font
 #+BEGIN_SRC emacs-lisp
 (set-frame-font "Fantasque Sans Mono-16" nil t)
 #+END_SRC
+
+** Transparency
+Set 95% transparency
+#+begin_src emacs-lisp :tangle yes
+(set-frame-parameter (selected-frame) 'alpha '(95 95))
+#+end_src
 * Keybindings
 ** Evil Mode
 Enable Vi bindings in emacs
@@ -67,4 +72,53 @@ Enable Vi bindings in emacs
   :ensure t
   :config
   (evil-mode 1))
+#+end_src
+
+** Spacemacs bindings
+#+begin_src emacs-lisp
+;; Custom keybinding
+(use-package general
+  :ensure t
+  :config (general-define-key
+  :states '(normal visual insert emacs)
+  :prefix "SPC"
+  :non-normal-prefix "M-SPC"
+  ;; "/"   '(counsel-rg :which-key "ripgrep") ; You'll need counsel package for this
+  "TAB" '(switch-to-prev-buffer :which-key "previous buffer")
+  "SPC" '(helm-M-x :which-key "M-x")
+  "ff"  '(helm-find-file :which-key "find files")
+  ;; Buffers
+  "bb"  '(helm-buffers-list :which-key "buffers list")
+  ;; Window
+  "wl"  '(windmove-right :which-key "move right")
+  "wh"  '(windmove-left :which-key "move left")
+  "wk"  '(windmove-up :which-key "move up")
+  "wj"  '(windmove-down :which-key "move bottom")
+  "w/"  '(split-window-right :which-key "split right")
+  "w-"  '(split-window-below :which-key "split bottom")
+  "wx"  '(delete-window :which-key "delete window")
+  ;; Others
+  "at"  '(ansi-term :which-key "open terminal")
+))
+#+end_src
+
+
+** Helm
+#+begin_src emacs-lisp
+;; Helm
+(use-package helm
+  :ensure t
+  :init
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-candidate-number-list 50))
+
+;; Which Key
+(use-package which-key
+  :ensure t
+  :init
+  (setq which-key-separator " ")
+  (setq which-key-prefix-prefix "+")
+  :config
+  (which-key-mode))
 #+end_src
