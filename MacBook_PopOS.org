@@ -1,0 +1,678 @@
+#+title:Pop_OS Configuration on MacBook Pro
+#+author: Gianluca Tadori
+
+* Upgrade
+First thing first: upgrade the system
+#+begin_src bash
+  sudo apt-get update && sudo apt-get upgrade
+#+end_src
+
+* Caps to Escape on single press
+Use =Caps= key as =Escape= on single press.
+We need one additional utility: *xcape*
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y xcape
+#+end_src
+
+Enable it on autostart
+#+begin_src conf :tangle ~/.config/autostart/xcape.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/xcape -e 'Control_L=Escape'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=xcape
+Name=xcape
+Comment[en_US]=remap Caps to single press escape
+Comment=remap Caps to single press escape
+#+end_src
+* Pandoc
+*pandoc*: wiss-army knife-like converter for files of many formats
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y pandoc
+#+end_src
+
+* LaTeX
+Install *latex* suite, around 5GB
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y texlive-full
+#+end_src
+
+* Inkscape
+*inkscape*: vector drawing, alternative to Illustrator
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y inkscape
+#+end_src
+
+* GIMP
+*GIMP*: photo editor, alternative to Photoshop
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y gimp
+#+end_src
+
+* Nextcloud Client
+Install *nextcloud*
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo add-apt-repository ppa:nextcloud-devs/client
+  sudo apt-get update
+  sudo apt-get install -y nextcloud-client
+#+end_src
+
+* Zotero
+*zotero*: academic paper reference manager
+*** Installation
+First, download the last version from the website =zotero.org=
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  cd Downloads
+  tar xvf Zotero_Linux*
+  sudo mv Zotero_Linux* /opt/zotero
+  cd /opt/zotero
+  ./set_launcher_icon
+  ln -s /opt/zotero/zotero.desktop ~/.local/share/applications/zotero.desktop
+#+end_src
+*** Syncing
+- zotero login
+- webdav attachments (Nextcloud)
+*** Extensions
+- better bibtex
+- scihub
+- zotxt
+- zotfile
+  - custom location: =~/Documents/Papers=
+  - rename without blank
+* Psychtoolbox
+Install *psychtoolbox* using =neurodebian=
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo wget -O- http://neuro.debian.net/lists/disco.de-m.full | sudo tee /etc/apt/sources.list.d/neurodebian.sources.list
+  sudo apt-key adv --recv-keys --keyserver hkp://pool.sks-keyservers.net:80 0xA5D32F012649A5A9
+  sudo apt-get update
+  sudo apt-get install -y matlab-support \
+       octave-psychtoolbox-3-nonfree \
+       matlab-psychtoolbox-3-nonfree
+#+end_src
+
+** High DPI
+In MATLAB shell, run this command
+#+begin_src matlab
+  s = settings;s.matlab.desktop.DisplayScaleFactor
+  s.matlab.desktop.DisplayScaleFactor.PersonalValue = 2
+#+end_src
+
+* Brave Browser
+   #+begin_src bash :tangle ~/Downloads/installer.sh
+     sudo apt install apt-transport-https curl
+
+     curl -s https://brave-browser-apt-release.s3.brave.com/brave-core.asc | sudo apt-key --keyring /etc/apt/trusted.gpg.d/brave-browser-release.gpg add -
+
+     echo "deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
+     sudo apt update
+
+     sudo apt install brave-browser
+   #+end_src
+
+* Spotify
+   #+begin_src bash :tangle ~/Downloads/installer.sh
+     curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add - 
+     echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+     sudo apt-get update && sudo apt-get install spotify-client
+     sudo rm /usr/share/applications/spotify.desktop
+     sudo rm /usr/share/applications/spotify.desktop
+   #+end_src
+
+** High DPI
+For increasing size, use =C-+= and it will be saved in preferences
+* Gnome
+** Tray Icons
+Enable this extension
+https://extensions.gnome.org/extension/1503/tray-icons/
+** Backup
+- Backup
+#+begin_src bash
+      dconf dump / > backup_of_my_settings
+#+end_src
+
+- Restore
+#+begin_src bash
+  dconf load / < backup_of_my_settings
+#+end_src
+* Fonts
+** Adobe Source Code Pro
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  FONT_HOME=~/.local/share/fonts
+  mkdir -p "$FONT_HOME/adobe-fonts/source-code-pro"
+
+  (git clone \
+       --branch release \
+       --depth 1 \
+       'https://github.com/adobe-fonts/source-code-pro.git' \
+       "$FONT_HOME/adobe-fonts/source-code-pro" && \
+       fc-cache -f -v "$FONT_HOME/adobe-fonts/source-code-pro")
+#+end_src
+* Refresh Rate
+Increase speed rate of keyboard
+   #+begin_src conf :tangle ~/.config/autostart/xset.desktop
+     [Desktop Entry]
+     Type=Application
+     Exec=/usr/bin/xset r rate 300 50
+     Hidden=false
+     NoDisplay=false
+     X-GNOME-Autostart-enabled=true
+     Name[en_US]=Keyboard Rate
+     Name=Keyboard Rate
+     Comment[en_US]=Increase keyboard rate speed
+     Comment=Increase keyboard rate speed
+   #+end_src
+
+* Caps to Control on pressing
+#+begin_src conf :tangle ~/.config/autostart/setxkbmap.desktop
+[Desktop Entry]
+Type=Application
+Exec=/usr/bin/setxkbmap it -option ctrl:nocaps
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=Swap Ctrl Escape
+Name=Swap Ctrl Escape
+Comment[en_US]=Maps the caps lock key to control
+Comment=Maps the caps lock key to control
+#+end_src
+
+* Spacemacs
+** Emacs
+#+begin_src bash
+  sudo add-apt-repository ppa:kelleyk/emacs
+  sudo apt-get update
+  sudo apt-get install -y emacs26
+#+end_src
+
+** Spacemacs
+Install *spacemacs* develop version
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+  cd ~/.emacs.d
+  git checkout develop
+  ln -s ~/Projects/Dotfiles/Spacemacs ~/.spacemacs
+#+end_src
+
+** Spacemacs Client
+Run *spacemacs* as client or daemon
+#+begin_src conf :tangle ~/.local/share/applications/spacemacs.desktop
+  [Desktop Entry]
+  Name=Spacemacs
+  GenericName=Text Editor
+  Comment=GNU Emacs is an extensible, customizable text editor - and more
+                     MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/x-c;text/x-c++;
+  Exec=emacsclient -c -a "" %F
+  Icon=/home/gian/.emacs.d/core/banners/img/spacemacs.png
+  Type=Application
+  Terminal=false
+  Categories=Development;TextEditor;
+  StartupWMClass=Emacs
+  Keywords=Text;Editor;
+#+end_src
+
+* Scripts
+Install *libnotify-bin* for notifications
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y libnotify-bin
+#+end_src
+
+** Remaps
+- Modify keyboard with this script
+- Used after suspend reset
+- Shortcut: =super-shift-r=
+#+begin_src bash :tangle ~/.local/bin/remaps :mkdirp yes :tangle-mode (identity #o755)
+  #!/bin/sh
+  setxkbmap it -option ctrl:nocaps; xcape -e 'Control_L=Escape'
+  xset r rate 300 50
+  notify-send "Caps Lock remapped"
+
+#+end_src
+
+* Zsh 
+** Install
+#+begin_src bash
+  sudo apt-get install -y zsh
+#+end_src
+
+** Colors
+#+begin_src conf :tangle ~/.zshrc
+    # Reload dircolors
+    autoload -U colors && colors
+#+end_src
+
+** History cache
+Create directory for history cache
+#+begin_src bash
+  mkdir -p ~/.cache/zsh
+#+end_src
+
+Increase size for cache directory
+#+begin_src conf :tangle ~/.zshrc
+  # History in cache directory:
+  HISTSIZE=100000
+  SAVEHIST=100000
+  HISTFILE=~/.cache/zsh/history
+#+end_src
+
+** Source files
+Source shortcuts and aliases
+#+begin_src conf :tangle ~/.conf
+  # Source files
+  [ -f "$HOME/.config/shortcutrc" ] && source "$HOME/.config/shortcutrc"
+  [ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
+
+#+end_src
+** Autocompletion
+#+begin_src conf :tangle ~/.zshrc
+  autoload -U compinit
+  zstyle ':completion:*' menu select
+  zmodload zsh/complist
+  compinit
+
+  # Include hidden files in autocomplete:
+  _comp_options+=(globdots)
+
+  # Use vim keys in tab complete menu:
+  bindkey -M menuselect 'h' vi-backward-char
+  bindkey -M menuselect 'k' vi-up-line-or-history
+  bindkey -M menuselect 'l' vi-forward-char
+  bindkey -M menuselect 'j' vi-down-line-or-history
+#+end_src
+** Vi Mode
+#+begin_src conf :tangle ~/.zshrc
+  bindkey -v '^?' backward-delete-char
+  export KEYTIMEOUT=1
+#+end_src
+
+** Ranger shortcut
+Use *ranger* for moving between directories
+   #+begin_src conf :tangle ~/.zshrc
+     rangercd () {
+         tmp="$(mktemp)"
+         ranger --choosedir="$tmp" "$@"
+         if [ -f "$tmp" ]; then
+             dir="$(cat "$tmp")"
+             rm -f "$tmp"
+             if [ -d "$dir" ]; then
+                 if [ "$dir" != "$(pwd)" ]; then
+                     cd "$dir"
+                 fi
+             fi
+         fi
+     }
+
+     bindkey -s '^o' 'rangercd\n'  # zsh
+   #+end_src
+
+** Syntax highlighting
+Install the plugin
+#+begin_src bash
+  sudo apt-get install -y zsh-syntax-highlighting
+#+end_src
+
+Source the plugin
+#+begin_src conf :tangle ~/.zshrc
+  source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#+end_src
+
+** Prompt
+I use the *powerlevel10k* prompt.
+First, install the plugin from github
+#+begin_src bash
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.local/share/powerlevel10k
+#+end_src
+
+Then source the plugin, and disable wizard
+#+begin_src conf :tangle ~/.zshrc
+  source ~/.local/share/powerlevel10k/powerlevel10k.zsh-theme
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+#+end_src
+
+* WoeUSB
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo add-apt-repository ppa:nilarimogard/webupd8
+  sudo apt-get update
+  sudo apt-get install -y woeusb
+#+end_src
+
+* Exfat
+#+begin_src bash :tangle ~/Downloads/installer.sh
+  sudo apt-get install -y exfat-fuse \
+       exfat-utils
+#+end_src
+
+* Alacritty
+** Installation
+   #+begin_src bash
+     sudo apt-get install -y alacritty
+   #+end_src
+** Config
+*** Colors
+Spacemacs colorscheme
+   #+begin_src yaml :tangle ~/.config/alacritty/alacritty.yml :mkdirp yes
+     # Spacemacs colorscheme
+     colors:
+       # Default colors
+       primary:
+         background: '0x1f2022'
+         foreground: '0xa3a3a3'
+
+       # Colors the cursor will use if `custom_cursor_colors` is true
+       cursor:
+         text: '0x1f2022'
+         cursor: '0xa3a3a3'
+
+       # Normal colors
+       normal:
+         black:   '0x1f2022'
+         red:     '0xf2241f'
+         green:   '0x67b11d'
+         yellow:  '0xb1951d'
+         blue:    '0x4f97d7'
+         magenta: '0xa31db1'
+         cyan:    '0x2d9574'
+         white:   '0xa3a3a3'
+
+       # Bright colors
+       bright:
+         black:   '0x585858'
+         red:     '0xf2241f'
+         green:   '0x67b11d'
+         yellow:  '0xb1951d'
+         blue:    '0x4f97d7'
+         magenta: '0xa31db1'
+         cyan:    '0x2d9574'
+         white:   '0xf8f8f8'
+
+       indexed_colors:
+         - { index: 16, color: '0xffa500' }
+         - { index: 17, color: '0xb03060' }
+         - { index: 18, color: '0x282828' }
+         - { index: 19, color: '0x444155' }
+         - { index: 20, color: '0xb8b8b8' }
+         - { index: 21, color: '0xe8e8e8' }
+   #+end_src
+*** Font
+    #+begin_src yaml :tangle ~/.config/alacritty/alacritty.yml
+      font:
+        # Normal (roman) font face
+        normal:
+          # Font family
+          #
+          # Default:
+          #   - (macOS) Menlo
+          #   - (Linux) monospace
+          #   - (Windows) Consolas
+          family: 'Source Code Pro'
+
+          # The `style` can be specified to pick a specific face.
+          style: Regular
+
+        # Point size
+        size: 14.0
+    #+end_src
+*** Misc
+    #+begin_src yaml :tangle ~/.config/alacritty/alacritty.yml
+        # Window padding
+        padding:
+          x: 6
+          y: 6
+
+        # Opacity
+      background_opacity: 1.0
+
+    #+end_src
+* Joplin
+   #+begin_src bash
+     wget -O - https://raw.githubusercontent.com/laurent22/joplin/master/Joplin_install_and_update.sh | bash
+   #+end_src
+* Anki
+** Installation
+#+begin_src bash
+  sudo apt-get install -y anki
+#+end_src
+** Extensions
+- *Night Mode*: 1496166067
+- *Image Occlusion*: 1374772155
+
+* Neovim
+** Vim Plug
+   #+begin_src vimrc :tangle ~/.config/nvim/init.vim :mkdirp yes
+     if ! filereadable(expand('~/.config/nvim/autoload/plug.vim'))
+       echo "Downloading junegunn/vim-plug to manage plugins..."
+       silent !mkdir -p ~/.config/nvim/autoload/
+       silent !curl "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" > ~/.config/nvim/autoload/plug.vim
+     endif
+
+     function! DoRemote(arg)
+       UpdateRemotePlugins
+     endfunction
+
+   #+end_src
+
+** List Plugins
+#+begin_src vimrc :tangle ~/.config/nvim/init.vim
+  " List Plugins
+  call plug#begin('~/.config/nvim/plugged')
+    Plug 'daeyun/vim-matlab'
+    " Plug 'Shougo/deoplete.nvim'
+    Plug 'francoiscabrol/ranger.vim'
+    Plug 'rbgrouleff/bclose.vim'
+    Plug 'yinflying/matlab.vim'
+    Plug 'andymass/vim-matchup'
+    " Plug 'junegunn/fzf.vim'
+    Plug 'tpope/vim-surround'
+    Plug 'junegunn/goyo.vim'
+    Plug 'jreybert/vimagit'
+    Plug 'tpope/vim-commentary'
+    Plug 'kovetskiy/sxhkd-vim'
+    Plug 'protesilaos/tempus-themes-vim'
+    " Plug 'lifepillar/vim-solarized8'
+    " Plug 'altercation/vim-colors-solarized'
+    Plug 'itchyny/lightline.vim'
+    Plug 'christoomey/vim-tmux-navigator'
+    Plug 'lervag/vimtex'
+    " Plug 'SirVer/ultisnips'
+    Plug 'neomake/neomake'
+    Plug 'benmills/vimux'
+    Plug 'tmux-plugins/vim-tmux'
+    Plug 'vimwiki/vimwiki'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'colepeters/spacemacs-theme.vim'
+  call plug#end()
+#+end_src
+
+** General Settings
+   #+begin_src vimrc :tangle ~/.config/nvim/init.vim
+     " Set leader key
+       let mapleader =","
+
+     " Set size of tab
+       set tabstop=4
+       set shiftwidth=4
+
+     " Basics
+       set go=a
+       set mouse=a
+       set nohlsearch
+       set clipboard+=unnamedplus
+       nnoremap c "_c
+       set nocompatible
+       filetype plugin on
+       syntax on
+       set encoding=utf-8
+       set number relativenumber
+
+     " Enable autocompletion:
+       set wildmode=longest,list,full
+
+     " Disables automatic commenting on newline:
+       autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+     " Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
+       set splitbelow splitright
+
+     " Remember last position
+       if has("autocmd")
+         au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+       endif
+
+     " Automatically deletes all trailing whitespace on save.
+       autocmd BufWritePre * %s/\s\+$//e
+   #+end_src
+
+** Colorscheme
+   #+begin_src vimrc :tangle ~/.config/nvim/init.vim
+          if (has("termguicolors"))
+            set termguicolors
+          endif
+          set background=dark
+          colorscheme spacemacs-theme
+
+     " Airline
+     let g:airline#extensions#tabline#enabled = 1
+     let g:airline_theme='base16_spacemacs'
+     let g:airline_powerline_fonts = 1
+   #+end_src
+
+** Shortcuts
+
+#+begin_src vimrc :tangle ~/.config/nvim/init.vim
+  " Goyo plugin makes text more readable when writing prose:
+    nnoremap <leader>f :Goyo \| set linebreak<CR>
+
+  " Spell-check set to <leader>o, 'o' for 'orthography':
+    map <leader>o :setlocal spell! spelllang=en_us<CR>
+
+  " Shortcutting split navigation, saving a keypress:
+    map <C-h> <C-w>h
+    map <C-j> <C-w>j
+    map <C-k> <C-w>k
+    map <C-l> <C-w>l
+
+  " Replace all is aliased to S.
+    nnoremap S :%s//g<Left><Left>
+
+  " Compile document, be it groff/LaTeX/markdown/etc.
+    map <leader>c :w! \| !compiler <c-r>%<CR>
+
+  " Autocompiler
+    map <leader>a :!setsid autocomp % &<CR>
+
+  " Open corresponding .pdf/.html or preview
+    map <leader>p :!opout <c-r>%<CR><CR>
+#+end_src
+
+** Other...
+#+begin_src vimrc :tangle ~/.config/nvim/init.vim
+
+  " Runs a script that cleans out tex build files whenever I close out of a .tex file.
+    autocmd VimLeave *.tex !texclear %
+
+  " Ensure files are read as what I want:
+    autocmd BufRead,BufNewFile /tmp/calcurse*,~/.calcurse/notes/* set filetype=markdown
+    autocmd BufRead,BufNewFile *.ms,*.me,*.mom,*.man set filetype=groff
+    autocmd BufRead,BufNewFile *.tex set filetype=tex
+
+  " Save file as sudo on files that require root permission
+    cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+
+  " Enable Goyo by default for mutt writting
+      autocmd BufRead,BufNewFile /tmp/neomutt* :Goyo
+    autocmd BufRead,BufNewFile /tmp/neomutt* let g:goyo_width=80
+    autocmd BufRead,BufNewFile /tmp/neomutt* map ZZ :Goyo\|x!<CR>
+    autocmd BufRead,BufNewFile /tmp/neomutt* map ZQ :Goyo\|q!<CR>
+
+
+  " When shortcut files are updated, renew bash and ranger configs with new material:
+    autocmd BufWritePost files,directories !shortcuts
+  " Run xrdb whenever Xdefaults or Xresources are updated.
+    autocmd BufWritePost *Xresources,*Xdefaults !xrdb %
+  " Update binds when sxhkdrc is updated.
+    autocmd BufWritePost *sxhkdrc !pkill -USR1 sxhkd
+  " update bspwm
+    autocmd BufWritePost *bspwmrc !sh %
+
+  " Syntax checker
+    autocmd FileType sh map <leader>s :!shellcheck
+    autocmd FileType matlab map <leader>s :!mlint
+
+  " Resize Panes
+      noremap <C-s>k :resize +6<CR>
+      noremap <C-s>j :resize -5<CR>
+      noremap <C-s>l :vertical:resize -5<CR>
+      noremap <C-s>h :vertical:resize +5<CR>
+
+  " vim terminal
+    tnoremap <Esc> <C-\><C-n>
+
+    " Autoscroll
+      let g:neoterm_autoscroll = 1
+
+      " Below right as default
+      let g:neoterm_default_mod = 'belowright'
+
+      " Automatic to REPL
+      " let g:neoterm_auto_open_repl = 1
+      let g:neoterm_direct_open_repl = 1
+
+  " matlab
+
+    if exists('$TMUX')
+      let g:matlab_server_launcher = 'tmux'
+    endif
+
+    let g:matlab_server_split = 'horizontal'
+    let g:matlab_auto_mappings = 0 "automatic mappings disabled
+    autocmd FileType matlab nnoremap <buffer><silent> <leader>c :MatlabLaunchServer<CR>
+    autocmd FileType matlab nnoremap <buffer><silent> <C-c><C-c> :MatlabCliRunLine<CR>j
+    autocmd FileType matlab nnoremap <buffer><silent> <C-c><cr> :MatlabCliRunCell<CR>/%%<CR>
+    autocmd FileType matlab vnoremap <buffer><silent> <C-c><C-c> :MatlabCliRunSelection<CR>
+
+    " Auto comments matlab
+    autocmd FileType matlab setlocal commentstring=%\ %s
+
+  " Fzf
+    command! -bang -nargs=? -complete=dir Files
+        \ call fzf#vim#files('~', fzf#vim#with_preview(), <bang>0)
+    nnoremap <C-p> :Files<Cr>
+    nmap <leader>b :Buffers<CR>
+    nmap <leader>h :History<CR>
+    nmap <C-s> :Lines<CR>
+
+  " Ranger
+
+  let g:ranger_map_keys = 0
+  nnoremap - :Ranger<CR>
+  nnoremap _ :vs<CR> :Ranger<CR>
+#+end_src
+
+** Vim Wiki
+#+begin_src vimrc :tangle ~/.config/nvim/init.vim
+  " Set vim wiki
+  let g:vimwiki_list = [{'path': '~/.local/share/wiki',
+                      \'syntax': 'markdown', 'ext': '.md',}]
+
+  let g:vimwiki_ext2syntax = {'.Rmd': 'markdown',
+                 \'.rmd': 'markdown',
+                 \'.md': 'markdown',
+                             \'.markdown': 'markdown',
+                 \'.mdown': 'markdown'}			" Vim Wiki
+
+#+end_src
+** Other...
+#+begin_src vimrc :tangle ~/.config/nvim/init.vim
+
+
+#+end_src
+* Macbook Pro Fans
+#+begin_src bash
+  sudo apt-get install -y mbpfan
+  sudo systemctl enable mbpfan
+  sudo systemctl start mbpfan
+#+end_src

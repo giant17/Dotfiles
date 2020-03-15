@@ -1,0 +1,34 @@
+#+title: Matlab Layer
+
+* Packages
+#+begin_src emacs-lisp :tangle ~/.emacs.d/private/matlab/packages.el :mkdirp yes
+  (defconst matlab-packages
+    '(matlab-mode))
+#+end_src
+
+** Init
+#+begin_src emacs-lisp :tangle ~/.emacs.d/private/matlab/packages.el
+  (defun matlab/init-matlab-mode ()
+    (use-package matlab-mode
+      :defer t
+      :init
+      ;; Explicitly run prog-mode hooks since matlab-mode does not derive from
+      ;; prog-mode major-mode
+      (add-hook 'matlab-mode-hook 'spacemacs/run-prog-mode-hooks))
+    :config
+    (spacemacs/set-leader-keys-for-major-mode 'matlab-mode
+      "si" 'matlab-shell
+      "sc" 'matlab-shell-run-cell
+      "sr" 'matlab-shell-run-region-or-line
+      "hc" 'matlab-shell-describe-command
+      "hv" 'matlab-shell-describe-variable
+      "ht" 'matlab-shell-topic-browser
+      "ha" 'matlab-shell-apropos
+      "ti" 'tempo-template-matlab-if
+      "tI" 'tempo-template-matlab-if-else
+      "tf" 'tempo-template-matlab-for
+      "ts" 'tempo-template-matlab-switch
+      "tt" 'tempo-template-matlab-try
+      "tw" 'tempo-template-matlab-while
+      "tF" 'tempo-template-matlab-function))
+#+end_src
